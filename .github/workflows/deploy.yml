@@ -1,0 +1,57 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v2
+        # with:
+        #   persist-credentials: false
+
+      - name: 构建
+        run: |
+          yarn
+          yarn build
+          
+#       - name: format dir
+#         run: |
+#           mv ./public/* ./
+          
+      - name: Format dir
+        run: |
+          rm -rf `ls *|egrep -v '(.git|public|.nojekyll)'`
+          mv ./public/* .
+          
+      - name: 部署Github Pages
+        run: |
+          git branch -v
+          git config --global user.email "1162275271@qq.com"
+          git config --global user.name "lblblong"
+          git add .
+          git commit -m "更新"
+          git checkout -b gh-pages
+          git push origin gh-pages -f
+#           cd public
+#           git config --global user.email "479826544@qq.com"
+#           git config --global user.name "479826544"
+#           git init
+#           git remote add origin https://github.com/479826544/479826544.github.io.git
+#           git add .
+#           git commit -m "up"
+#           git checkout -b gh-pages
+#           git push origin gh-pages -f
+
+#       - name: 上传github
+#         uses: x-actions/gh-pages@release/v1
+#         env:
+#           GITHUB_EMAIL: "479826544@qq.com"
+#           GITHUB_USERNAME: "479826544@qq.com"
+#           PUBLISH_REPO: https://github.com/479826544/479826544.github.io
+#           PUBLISH_BRANCH: gh-pages
+#           PUBLISH_DIR: ./public
+          # DEPLOY_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIVATE_KEY }}
